@@ -12,9 +12,9 @@
 
 ## Overview
 
-Bones and All is a full stack Android mobile application designed to help users track and monitor chronic health conditions. The app centers around a highly customizable daily questionnaire system, allowing users to define exactly what they want to track — whether that is pain levels, meals, mood, or any custom metric they choose.
+Bones and All is a full stack Android mobile application designed to help users track and monitor chronic health conditions. The app centers around a highly customizable daily questionnaire system, allowing users to define exactly what they want to track — whether that is pain levels, meals, mood, or any custom metric they choose.        
 
-The project was developed as part of a comparative research study evaluating the effectiveness of AI models (Claude Sonnet, GitHub Copilot, and ChatGPT) across different stages of the software development lifecycle.
+The project was developed as part of a Senior Honors research study evaluating the effectiveness of AI models across different stages of the software development lifecycle, using Claude Sonnet as the primary AI development assistant.
 
 ---
 
@@ -29,7 +29,6 @@ The project was developed as part of a comparative research study evaluating the
 | Daily Journaling | Add journal notes alongside questionnaire responses |
 | Push Notifications | Optional daily reminders via Firebase Cloud Messaging |
 | Data Visualization | View trends and patterns from logged health data |
-| Eating Tracker | Log meals by Breakfast, Lunch, Dinner, and Snacks |
 | Profile & Settings | Manage account info, notification time, and preferences |
 
 ---
@@ -38,13 +37,14 @@ The project was developed as part of a comparative research study evaluating the
 
 | Layer | Technology |
 |---|---|
-| Frontend | Flutter (Dart) |
-| Backend | Node.js, Express.js |
-| Database | PostgreSQL |
-| Notifications | Firebase Cloud Messaging (FCM) |
-| Authentication | JSON Web Tokens (JWT) |
-| Password Security | bcrypt hashing |
-| Communication | HTTP/TLS (SSL encrypted) |
+| Frontend | Flutter (Dart) | Android mobile UI |
+| Backend | Node.js, Express.js | REST API server |
+| Database | PostgreSQL | Persisent data storage |
+| Notifications | Firebase Cloud Messaging (FCM) | Push notification delivery |
+| Authentication | JSON Web Tokens (JWT) | Stateless user authentication |
+| Password Security | bcrypt | Password Hashing |
+| Communication | HTTP/TLS (SSL encrypted) | Encrypted data transfer |
+| Scheduling | node-cron | Daily notification jobs |
 
 ---
 
@@ -69,30 +69,39 @@ bones-and-all/
 ├── backend/
 │   └── src/
 │       ├── db/
-│       │   ├── index.js          # Database connection pool
-│       │   └── schema.sql        # PostgreSQL table definitions
+│       │   ├── index.js                # PostgreSQL connection pool
+│       │   └── schema.sql              # All table definitions
 │       ├── jobs/
-│       │   └── dailyReminder.js  # Scheduled FCM notification job
-│       ├── middleware/           # JWT auth and request middleware
-│       ├── routes/               # API route handlers
+│       │   └── dailyReminder.js        # Scheduled FCM cron job
+│       ├── middleware/
+│       │   └── auth.js                 # JWT verification middleware
+│       ├── routes/
+│       │   ├── auth.js                 # Register and login
+│       │   ├── blocks.js               # Trackable blocks CRUD
+│       │   ├── questions.js            # Questions CRUD
+│       │   ├── logs.js                 # Daily log entries CRUD
+│       │   ├── questionnaire.js        # Questionnaire responses
+│       │   ├── notifications.js        # Notification preferences
+│       │   └── profile.js              # User profile management
 │       ├── services/
-│       │   └── fcm.js            # Firebase Cloud Messaging service
-│       └── app.js                # Express app entry point
+│       │   └── fcm.js                  # Firebase Cloud Messaging service
+│       └── app.js                      # Express app entry point
 │
 ├── frontend/
-│   ├── android/                  # Android build configuration
+│   ├── android/                        # Android build configuration
 │   ├── lib/
-│   │   └── main.dart             # Flutter app entry point
+│   │   ├── services/
+│   │   │   └── auth_service.dart       # Auth API service
+│   │   └── main.dart                   # Flutter app entry point
 │   ├── test/
 │   │   └── widget_test.dart
-│   ├── pubspec.yaml              # Flutter dependencies
-│   └── analysis_options.yaml
+│   └── pubspec.yaml                    # Flutter dependencies
 │
 └── docs/
     ├── ActivityDiagram.png
     ├── SystemArchitecture.png
     ├── PrototypeScreens.png
-    └── DatabaseSchema.sql
+    └── DatabaseSchema.png
 ```
 
 ---
@@ -104,7 +113,7 @@ PostgreSQL is used with the following six tables:
 | Table | Description |
 |---|---|
 | `users` | Login credentials, profile info, FCM token, and notification preferences |
-| `trackable_blocks` | Customizable tracking sections created by the user (e.g. Pain, Food) |
+| `blocks` | Customizable block sections created by the user (e.g. Pain, Food) |
 | `questions` | Individual questions belonging to a trackable block |
 | `logs` | One daily entry per block per user, includes optional journal entry |
 | `questionnaire_responses` | Individual answers to questions within a log entry |
@@ -113,21 +122,61 @@ PostgreSQL is used with the following six tables:
 See [`Database Schema`](docs/DatabaseSchema.png) for full table definitions.
 
 ---
+## API Endpoints
 
-## API Overview
+All endpoints except `/api/auth` require a valid JWT token in the `Authorization: Bearer <token>` header.
 
+### Auth
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/api/auth/register` | Register a new user |
-| POST | `/api/auth/login` | Login and receive JWT token |
-| GET | `/api/blocks` | Get all trackable blocks for a user |
-| POST | `/api/blocks` | Create a new trackable block |
-| GET | `/api/logs` | Get logs for a user |
-| POST | `/api/logs` | Create a new daily log entry |
-| POST | `/api/questionnaire` | Save questionnaire responses |
-| GET | `/api/notifications` | Get notification history |
+| POST | `/api/auth/register` | Register a new user, returns JWT |
+| POST | `/api/auth/login` | Login, returns JWT |
 
-> All routes except `/api/auth` require a valid JWT token in the request header.
+### Blocks
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/blocks` | Create a new trackable block |
+| GET | `/api/blocks` | Get all blocks for logged in user |
+| PATCH | `/api/blocks/:id` | Rename or reorder a block |
+| DELETE | `/api/blocks/:id` | Delete a block and all associated data |
+
+### Questions
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/questions` | Add a question to a block |
+| GET | `/api/questions/:blockId` | Get all questions for a block |
+| PATCH | `/api/questions/:id` | Edit a question |
+| DELETE | `/api/questions/:id` | Delete a question |
+
+### Logs
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/logs` | Create or update a daily log entry |
+| GET | `/api/logs/:blockId` | Get all logs for a block |
+| GET | `/api/logs/:blockId/:date` | Get a specific log by date |
+| PATCH | `/api/logs/:id` | Update a journal entry |
+| DELETE | `/api/logs/:id` | Delete a log |
+
+### Questionnaire
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/questionnaire` | Save an array of responses for a log |
+| GET | `/api/questionnaire/:logId` | Get all responses for a log |
+
+### Notifications
+| Method | Endpoint | Description |
+|---|---|---|
+| PATCH | `/api/notifications/preferences` | Update notification settings and FCM token |
+| GET | `/api/notifications/preferences` | Get current notification settings |
+| GET | `/api/notifications/history` | Get last 50 notifications sent |
+
+### Profile
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/profile` | Get user profile |
+| PATCH | `/api/profile` | Update display name or profile picture |
+| DELETE | `/api/profile` | Delete account and all associated data |
+
 
 ---
 
@@ -139,6 +188,7 @@ See [`Database Schema`](docs/DatabaseSchema.png) for full table definitions.
 - [PostgreSQL](https://www.postgresql.org) (v15+)
 - Firebase Project with FCM enabled
 - Android Studio or VS Code
+
 
 ### Backend Setup
 
@@ -165,7 +215,7 @@ JWT_SECRET=your_jwt_secret
 
 Add your `serviceAccountKey.json` from Firebase to the `backend/` root.
 
-Create the database and run the schema:
+Create the database in PostgreSQL then run the schema:
 ```bash
 psql -U postgres -d bones_and_all -f src/db/schema.sql
 ```
@@ -178,7 +228,10 @@ npm run dev
 Verify the server is running:
 ```
 GET http://localhost:3000/health
+Expected: { "db": "connected", "time": "<timestamp>" }
 ```
+
+
 
 ### Frontend Setup
 
@@ -213,14 +266,20 @@ flutter run
 
 ## Research Context
 
-This project serves as the application component of a Senior Honors research paper titled:
+This project serves as the application component of a Senior Honors research paper:
 
-> *"Through a comparative analysis of three AI models used in the development of the mobile application Bones and All, this study evaluates their effectiveness across different stages of the software development lifecycle to determine best practices for AI-assisted software development."*
+> *"Through an in-depth analysis of Claude Sonnet as an AI assistant used throughout the development of the mobile application Bones and All, this study evaluates its effectiveness, limitations, and impact across different stages of the software development lifecycle to determine best practices for AI-assisted software development."*
 
-**AI Models Evaluated:**
-- Claude Sonnet — Primary development assistant
-- GitHub Copilot (GPT) — Code completion assistant
-- ChatGPT — Comparison and verification
+**AI Model Used:** Claude Sonnet (Anthropic) — Primary development assistant throughout planning, design, backend development, frontend development, and documentation.
+
+**SDLC Stages Evaluated:**
+- Project planning and architecture design
+- Database schema design
+- Backend REST API development
+- Frontend Flutter development
+- Testing and debugging
+- Documentation
+
 
 ---
 
