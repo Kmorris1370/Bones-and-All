@@ -12,9 +12,9 @@
 
 ## Overview
 
-Bones and All is a full stack Android mobile application designed to help users track and monitor chronic health conditions. The app centers around a highly customizable daily questionnaire system, allowing users to define exactly what they want to track — whether that is pain levels, meals, mood, or any custom metric they choose.
+Bones and All is a full stack Android mobile application designed to help users track and monitor chronic health conditions. The app centers around a highly customizable daily questionnaire system, allowing users to define exactly what they want to track — whether that is pain levels, meals, mood, or any custom metric they choose.        
 
-The project was developed as part of a comparative research study evaluating the effectiveness of AI models (Claude Sonnet, GitHub Copilot, and ChatGPT) across different stages of the software development lifecycle.
+The project was developed as part of a Senior Honors research study evaluating the effectiveness of AI models across different stages of the software development lifecycle, using Claude Sonnet as the primary AI development assistant.
 
 ---
 
