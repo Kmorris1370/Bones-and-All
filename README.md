@@ -200,6 +200,62 @@ This project serves as the application component of a Senior Honors research pap
 
 ---
 
+## Documentation
+> Full developer documentation is available in the [project wiki](https://github.com/Kmorris1370/Bones-and-All/wiki)):
+#### Frontend
+
+1. [API Reference](https://github.com/Kmorris1370/Bones-and-All/wiki/API-Reference)
+
+2. [JavaScript](https://github.com/Kmorris1370/Bones-and-All/wiki/JavaScript)
+
+3. [Backend Structure](https://github.com/Kmorris1370/Bones-and-All/wiki/Backend-Structure)
+
+4. [Middleware](https://github.com/Kmorris1370/Bones-and-All/wiki/Middleware)
+
+5. [Firebase](https://github.com/Kmorris1370/Bones-and-All/wiki/Firebase)
+
+6. [Database](https://github.com/Kmorris1370/Bones-and-All/wiki/Database)
+
+7. [Security](https://github.com/Kmorris1370/Bones-and-All/wiki/Security)
+
+8. [Railway](https://github.com/Kmorris1370/Bones-and-All/wiki/Railway)
+
+9. [Project Build](https://github.com/Kmorris1370/Bones-and-All/wiki/Project-Build)
+
+10. [System Architecture](https://github.com/Kmorris1370/Bones-and-All/wiki/System-Architecture)
+
+11. [Maintenance](https://github.com/Kmorris1370/Bones-and-All/wiki/Maintenance)
+
+12. [Known Issues](https://github.com/Kmorris1370/Bones-and-All/wiki/Known-Issues)
+
+#### Backend 
+
+1. [API Reference](https://github.com/Kmorris1370/Bones-and-All/wiki/API-Reference)
+
+2. [JavaScript](https://github.com/Kmorris1370/Bones-and-All/wiki/JavaScript)
+
+3. [Backend Structure](https://github.com/Kmorris1370/Bones-and-All/wiki/Backend-Structure)
+
+4. [Middleware](https://github.com/Kmorris1370/Bones-and-All/wiki/Middleware)
+
+5. [Firebase](https://github.com/Kmorris1370/Bones-and-All/wiki/Firebase)
+
+6. [Database](https://github.com/Kmorris1370/Bones-and-All/wiki/Database)
+
+7. [Security](https://github.com/Kmorris1370/Bones-and-All/wiki/Security)
+
+8. [Railway](https://github.com/Kmorris1370/Bones-and-All/wiki/Railway)
+
+9. [Project Build](https://github.com/Kmorris1370/Bones-and-All/wiki/Project-Build)
+
+10. [System Architecture](https://github.com/Kmorris1370/Bones-and-All/wiki/System-Architecture)
+
+11. [Maintenance](https://github.com/Kmorris1370/Bones-and-All/wiki/Maintenance)
+
+12. [Known Issues](https://github.com/Kmorris1370/Bones-and-All/wiki/Known-Issues)
+
+--- 
+
 ## Future Developments
 
 - Timezone-aware push notifications
